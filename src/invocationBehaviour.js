@@ -1,26 +1,19 @@
 function InvocationBehaviour(caller, method, args) {
-    this.caller = caller;
-    this.method = method;
-    this.args = args;
+    this.getCaller = function() { return caller };
+    this.getMethod = function() { return method };
+    this.getArgs = function() { return args };
     
     this.equals = function(other) {
         var argumentMatcher = new ArgumentMatcher();
 
-        return caller == other.caller && method === other.method && argumentMatcher.areEqual(args, other.args);
+        return caller == other.getCaller() && method === other.getMethod() && argumentMatcher.areEqual(args, other.getArgs());
     };
 
     this.toString = function calculateToString() {
         var toStr = caller.toString() + "." + method;
 
         if (args.length !== 0) {
-            toStr = toStr + "(";
-
-            for (var i = 0; i < args.length; i++) {
-                toStr = toStr + args[i].toString() + ',';
-            }
-
-            toStr = toStr.substring(0, toStr.length - 1);
-            toStr = toStr + ")";
+            toStr = toStr + '(' + args.toString() + ')';
         }else {
             toStr = toStr + "()";
         }

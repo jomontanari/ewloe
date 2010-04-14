@@ -4,7 +4,14 @@ function MockControl() {
 
     var mocks = [];
 
-    this.createMock = function(objectToMock) {
+    this.createStrictMock = function(objectToMock) {
+        var mock = new Mock(objectToMock);
+        mocks.push(mock);
+
+        return mock;
+    };
+
+    this.createDynamicMock = function(objectToMock) {
         var mock = new Mock(objectToMock);
         mocks.push(mock);
 

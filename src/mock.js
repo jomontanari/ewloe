@@ -1,11 +1,9 @@
-function Mock(classToMock) {
+function Mock(classToMock, expectationMatcher) {
     var recording = false;
     var lastExpectedFunctionName = null;
 
     var calls = [];
     var callsToIgnore = [];
-
-    var expectationMatcher = new ExpectationMatcher();
 
     initMock(this);
 
