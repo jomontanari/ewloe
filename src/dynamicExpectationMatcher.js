@@ -11,13 +11,7 @@ function DynamicExpectationMatcher() {
     };
 
     this.verify = function() {
-        var discrepancy = null;
-
-        if (!discrepancy) {
-            discrepancy = checkExpectations();
-        }
-
-        return discrepancy;
+        return checkExpectations();
     };
 
     function checkExpectations() {

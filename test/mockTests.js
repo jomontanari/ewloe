@@ -2,7 +2,8 @@ var mock = null;
 
 TestCase("MockTests", {
     setUp : function() {
-        mock = new Mock(Person, new ExpectationMatcher());
+        mock = new Mock(new DynamicExpectationMatcher());
+        mock.init(Person);
     },
 
     test_mock_replaces_all_public_methods_on_class : function() {
@@ -27,7 +28,7 @@ TestCase("MockTests", {
     },
 
     test_mock_executes_function_set_by_expectation : function() {
-        mock.expects().getAge().stub(function() {
+        mock.expects().getAge().toExecute(function() {
             return 73;
         });
 
@@ -61,7 +62,9 @@ TestCase("MockTests", {
             }
         };
 
-        var mock = new Mock(Person, expectationMatcherStub);
+        var mock = new Mock(expectationMatcherStub);
+        mock.init(Person);
+        
         mock.verify();
 
         assertTrue(verifyCalled);

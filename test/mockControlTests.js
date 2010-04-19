@@ -4,14 +4,14 @@ TestCase("MockControlTests", {
         var personMock = mockControl.createStrictMock(Person);
 
         assertNotNull(personMock);
-        assertTrue(personMock instanceof Mock);
+        assertTrue(personMock instanceof StrictMock);
     },
 
     test_create_dynamic_mock_returns_the_created_mock : function() {
         var mockControl = new MockControl();
-        var personMock = mockControl.createStrictMock(Person);
+        var personMock = mockControl.createDynamicMock(Person);
 
         assertNotNull(personMock);
-        assertTrue(personMock instanceof Mock);
+        assertTrue(personMock instanceof DynamicMock);
     }
 });

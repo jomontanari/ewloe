@@ -27,7 +27,7 @@ function StrictExpectationMatcher() {
             var actualCall = actualCalls[i];
 
             var matchingCalls = MockHelper.findAll(expectedCalls, function(invocationBehaviour) {
-                return actualCall == invocationBehaviour;
+                return actualCall.equals(invocationBehaviour);
             });
 
             if (matchingCalls.length === 0) {
@@ -46,11 +46,11 @@ function StrictExpectationMatcher() {
             var expectedCall = expectedCalls[i];
 
             var matchingCalls = MockHelper.findAll(actualCalls, function(invocationBehaviour) {
-                return expectedCall == invocationBehaviour;
+                return expectedCall.equals(invocationBehaviour);
             });
 
             if (matchingCalls.length === 0) {
-                discrepancy = new Discrepancy("Expectated call '" + expectedCall.toString() + "' not executed");
+                discrepancy = new Discrepancy("Expected call '" + expectedCall.toString() + "' not executed");
                 break;
             }
         }

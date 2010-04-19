@@ -1,31 +1,24 @@
-function Mock(classToMock, expectationMatcher) {
+function Mock(expectationMatcher) {
     var recording = false;
     var lastExpectedFunctionName = null;
+    var mockedClass = null;
 
     var calls = [];
-    var callsToIgnore = [];
-
-    initMock(this);
 
     this.expects = function() {
         recording = true;
         return this;
     };
 
-    this.ignores = function(ignoredCalls) {
-        callsToIgnore = ignoredCalls;
-        return this;
-    };
-
     this.toReturn = function(valueToReturn) {
-        return this.stub(function() { return valueToReturn; });
+        return this.toExecute(function() { return valueToReturn; });
     };
 
     this.toThrow = function(error) {
-        return this.stub(function() { throw error; });
+        return this.toExecute(function() { throw error; });
     };
 
-    this.stub = function(closure) {
+    this.toExecute = function(closure) {
         if (typeof closure !== 'function') {
             throw Error("Value passed to stub call needs to be a function");
         }
@@ -39,17 +32,24 @@ function Mock(classToMock, expectationMatcher) {
 
 
     this.verify = function(){
-        return expectationMatcher.verify();    
+        return expectationMatcher.verify();
     };
 
+    this.init = function(classToMock) {
+        mockedClass = classToMock;
+
+        initMock(this);
+    };
+
+    
     function initMock(mock) {
-        if (typeof(classToMock) == 'function') {
-            createMethods(classToMock, mock);
-            createMethods(new classToMock(), mock);
-        }else if (typeof(classToMock) == 'object') {
-            createMethods(classToMock, mock);
+        if (typeof(mockedClass) == 'function') {
+            createMethods(mockedClass, mock);
+            createMethods(new mockedClass(), mock);
+        }else if (typeof(mockedClass) == 'object') {
+            createMethods(mockedClass, mock);
         }else {
-            throw new Error("Cannot mock out a " + typeof(classToMock));
+            throw new Error("Cannot mock out a " + typeof(mockedClass));
         }
     }
 
