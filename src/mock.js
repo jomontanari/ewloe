@@ -1,9 +1,10 @@
-function Mock(expectationMatcher) {
+function Mock(classToMock, expectationMatcher) {
     var recording = false;
     var lastExpectedFunctionName = null;
-    var mockedClass = null;
 
     var calls = [];
+
+    initMock(this);
 
     this.expects = function() {
         recording = true;
@@ -30,24 +31,21 @@ function Mock(expectationMatcher) {
         return this;
     };
 
+    this.verifyStrict = function() {
+        return expectationMatcher.verify(true);
+    };
 
     this.verify = function(){
         return expectationMatcher.verify();
     };
 
-    this.init = function(classToMock) {
-        mockedClass = classToMock;
-
-        initMock(this);
-    };
-
     
     function initMock(mock) {
-        if (typeof(mockedClass) == 'function') {
-            createMethods(mockedClass, mock);
-            createMethods(new mockedClass(), mock);
-        }else if (typeof(mockedClass) == 'object') {
-            createMethods(mockedClass, mock);
+        if (typeof(classToMock) == 'function') {
+            createMethods(classToMock, mock);
+            createMethods(new classToMock(), mock);
+        }else if (typeof(classToMock) == 'object') {
+            createMethods(classToMock, mock);
         }else {
             throw new Error("Cannot mock out a " + typeof(mockedClass));
         }
