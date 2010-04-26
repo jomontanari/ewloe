@@ -9,30 +9,30 @@ describe 'InvocationBehaviour'
             invocationBehaviour1.equals(invocationBehaviour2).should.be_true;
         end
 
-//        it 'should return false if the callers are different'
-//            var invocationBehaviour1 = new InvocationBehaviour({}, "setName", ["bob"]);
-//            var invocationBehaviour2 = new InvocationBehaviour({}, "setName", ["bob"]);
-//
-//            invocationBehaviour1.equals(invocationBehaviour2).should.be_false;
-//        end
-//
-//        it 'should return false if the methods are different'
-//            var caller = {};
-//
-//            var invocationBehaviour1 = new InvocationBehaviour(caller, "setName", ["bob"]);
-//            var invocationBehaviour2 = new InvocationBehaviour(caller, "getName", ["bob"]);
-//
-//            invocationBehaviour1.equals(invocationBehaviour2).should.be_false;
-//        end
-//
-//        it 'should return false if the arguments are different'
-//            var caller = {};
-//
-//            var invocationBehaviour1 = new InvocationBehaviour(caller, "getName", ["bob"]);
-//            var invocationBehaviour2 = new InvocationBehaviour(caller, "getName", ["doe"]);
-//
-//            invocationBehaviour1.equals(invocationBehaviour2).should.be_false;
-//        end
+        it 'should return false if the callers are different'
+            var invocationBehaviour1 = new InvocationBehaviour({}, "setName", ["bob"]);
+            var invocationBehaviour2 = new InvocationBehaviour({}, "setName", ["bob"]);
+
+            invocationBehaviour1.equals(invocationBehaviour2).should.be_false;
+        end
+
+        it 'should return false if the methods are different'
+            var caller = {};
+
+            var invocationBehaviour1 = new InvocationBehaviour(caller, "setName", ["bob"]);
+            var invocationBehaviour2 = new InvocationBehaviour(caller, "getName", ["bob"]);
+
+            invocationBehaviour1.equals(invocationBehaviour2).should.be_false;
+        end
+
+        it 'should return false if the arguments are different'
+            var caller = {};
+
+            var invocationBehaviour1 = new InvocationBehaviour(caller, "getName", ["bob"]);
+            var invocationBehaviour2 = new InvocationBehaviour(caller, "getName", ["doe"]);
+
+            invocationBehaviour1.equals(invocationBehaviour2).should.be_false;
+        end
     end
 
     describe 'description'
