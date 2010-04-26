@@ -36,10 +36,13 @@ function Mock(classToMock, expectationMatcher) {
     };
 
     this.verify = function(){
-        return expectationMatcher.verify();
+        return expectationMatcher.verify(false);
     };
 
-    
+    this.toString = function() {
+        return classToMock.name;
+    };
+
     function initMock(mock) {
         if (typeof(classToMock) == 'function') {
             createMethods(classToMock, mock);

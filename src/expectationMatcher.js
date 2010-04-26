@@ -10,8 +10,12 @@ function ExpectationMatcher() {
         actualCalls.push(invocationBehaviour);
     };
 
-    this.verify = function() {
-        var discrepancy = checkForUnexpectedCalls();
+    this.verify = function(strict) {
+        var discrepancy = null;
+        
+        if (strict) {
+            discrepancy = checkForUnexpectedCalls();
+        }
 
         if (!discrepancy) {
             discrepancy = checkExpectations();

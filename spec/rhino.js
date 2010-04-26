@@ -4,9 +4,9 @@ load('src/mockHelper.js');
 load('src/discrepancy.js');
 load('src/argumentMatcher.js');
 load('src/invocationBehaviour.js');
-load('src/strictExpectationMatcher.js');
-load('src/dynamicExpectationMatcher.js');
+load('src/expectationMatcher.js');
 load('src/mock.js');
+load('src/frameworkIntegration.js');
 load('src/mockControl.js');
 load('test/person.js');
 

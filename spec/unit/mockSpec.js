@@ -1,10 +1,10 @@
 describe 'Mock'
     before_each
-        mock = new Mock(Person, new DynamicExpectationMatcher());
+        mock = new Mock(Person, new ExpectationMatcher());
     end
 
     describe 'Mocking'
-        it 'should replace all public methods onclass'
+        it 'should replace all public methods on class'
             mock.hasOwnProperty('getName').should.be_true
             mock.hasOwnProperty('getAge').should.be_true
         end

@@ -1,11 +1,10 @@
-function MockControl() {
-    var lastMock = null;
-    var lastCallName = null;
+function MockControl(frameworkIntegration) {
+    var framework = frameworkIntegration || new FrameworkIntegration();
 
     var mocks = [];
 
-    this.createMock = function(objectToMock) {
-        var mock = new Mock(objectToMock);
+    this.createMock = function(classToMock) {
+        var mock = new Mock(classToMock, new ExpectationMatcher());
         mocks.push(mock);
 
         return mock;
@@ -14,12 +13,22 @@ function MockControl() {
     this.verify = function() {
         for(var i = 0; i < mocks.length; i++) {
             var mock = mocks[i];
-
             var discrepancy = mock.verify();
 
             if (discrepancy != null) {
-                fail(discrepency)
+                framework.fail(discrepancy);
             }
         }
-    }
+    };
+
+    this.verifyStrict = function() {
+        for(var i = 0; i < mocks.length; i++) {
+            var mock = mocks[i];
+            var discrepancy = mock.verifyStrict();
+
+            if (discrepancy != null) {
+                framework.fail(discrepancy);
+            }
+        }
+    };
 }

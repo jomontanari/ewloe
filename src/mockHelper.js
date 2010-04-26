@@ -17,3 +17,14 @@ MockHelper.findAll = function(array, predicate) {
 
     return returnValues;
 };
+
+MockHelper.convertToArray = function(arguments) {
+    var convertedArguments = [];
+
+    for (var i = 0; i < arguments.length; i++) {
+        convertedArguments[i] = arguments[i];
+    }
+
+    return convertedArguments;
+    
+};

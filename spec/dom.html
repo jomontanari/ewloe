@@ -5,12 +5,22 @@
 		<script src="/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib/jspec.xhr.js"></script>
         <script src="../src/mockHelper.js"></script>
         <script src="../src/discrepancy.js"></script>
-        <script src="../src/aru.js"></script>
-		<script src="unit/spec.helper.js"></script>
+        <script src="../src/argumentMatcher.js"></script>
+        <script src="../src/invocationBehaviour.js"></script>
+        <script src="../src/expectationMatcher.js"></script>
+        <script src="../src/mock.js"></script>
+        <script src="../src/frameworkIntegration.js"></script>
+        <script src="../src/mockControl.js"></script>
+        <script src="../test/person.js"></script>
+
 		<script>
 			function runSuites() {
 				JSpec
-				.exec('unit/spec.js')
+				.exec('unit/argumentMatcherSpec.js')
+//				.exec('unit/invocationBehaviourSpec.js')
+//				.exec('unit/mockControlSpec.js')
+//				.exec('unit/mockHelperSpec.js')
+//				.exec('unit/mockSpec.js')
 				.run({ fixturePath: 'fixtures' })
 				.report()
 			}
