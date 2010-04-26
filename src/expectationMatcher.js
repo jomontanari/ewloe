@@ -1,4 +1,4 @@
-function DynamicExpectationMatcher() {
+function ExpectationMatcher() {
     var expectedCalls = [];
     var actualCalls = [];
 
@@ -11,8 +11,33 @@ function DynamicExpectationMatcher() {
     };
 
     this.verify = function() {
-        return checkExpectations();
+        var discrepancy = checkForUnexpectedCalls();
+
+        if (!discrepancy) {
+            discrepancy = checkExpectations();
+        }
+
+        return discrepancy;
     };
+
+    function checkForUnexpectedCalls() {
+        var discrepancy = null;
+
+        for (var i = 0; i < actualCalls.length; i++) {
+            var actualCall = actualCalls[i];
+
+            var matchingCalls = MockHelper.findAll(expectedCalls, function(invocationBehaviour) {
+                return actualCall.equals(invocationBehaviour);
+            });
+
+            if (matchingCalls.length === 0) {
+                discrepancy = new Discrepancy("Unexpected call '" + actualCall.toString() + "' found");
+                break;
+            }
+        }
+
+        return discrepancy;
+    } 
 
     function checkExpectations() {
         var discrepancy = null;
