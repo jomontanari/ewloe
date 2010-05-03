@@ -4,14 +4,28 @@ function MockControl(frameworkIntegration) {
     var mocks = [];
 
     this.createDynamicMock = function(thingToMock) {
-        var mock = new Mock(thingToMock, new DynamicExpectationMatcher());
+        var mock = null;
+
+        if (typeof(thingToMock) == 'object') {
+            mock = new Mock(thingToMock, thingToMock, new DynamicExpectationMatcher());
+        } else {
+            mock = new Mock({}, thingToMock, new DynamicExpectationMatcher());
+        }
+
         mocks.push(mock);
 
         return mock;
     };
 
     this.createStrictMock = function(thingToMock) {
-        var mock = new Mock(thingToMock, new StrictExpectationMatcher());
+        var mock = null;
+
+        if (typeof(thingToMock) == 'object') {
+            mock = new Mock(thingToMock, thingToMock, new StrictExpectationMatcher());
+        } else {
+            mock = new Mock({}, thingToMock, new StrictExpectationMatcher());
+        }
+
         mocks.push(mock);
 
         return mock;

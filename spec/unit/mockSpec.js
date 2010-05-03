@@ -1,6 +1,6 @@
 describe 'Mock'
     before_each
-        mock = new Mock(Person, new DynamicExpectationMatcher());
+        mock = new Mock({}, Person, new DynamicExpectationMatcher());
     end
 
     describe 'Mocking'
@@ -70,8 +70,7 @@ describe 'Mock'
                 }
             };
 
-            mock = new Mock(Person, expectationMatcherStub);
-
+            mock = new Mock({}, Person, expectationMatcherStub);
             mock.verify();
 
             verifyCalled.should.be_true

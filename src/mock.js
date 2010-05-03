@@ -1,77 +1,43 @@
-function Mock(classToMock, expectationMatcher) {
-    var recording = false;
-    var beingTold = false;
-    var lastCalledMethodName = null;
-    var lastExpectedBehaviour = null;
-
-    var calls = [];
-
-    initMock(this);
-
-    this.expects = function() {
-        recording = true;
-        return this;
-    };
-
-    this.tells = function() {
-        beingTold = true;
-
-        return this;
-    };
-    
-    this.toReturn = function(valueToReturn) {
-        this.toExecute(function() { return findValueToReturn(valueToReturn); });
-    };
-
-    this.toThrow = function(error) {
-        this.toExecute(function() { throw error; });
-    };
-
-    this.toExecute = function(closure) {
-        if (typeof closure !== 'function') {
-            throw Error("Value passed to stub call needs to be a function");
-        }
-
-        initialiseCallArray();
-
-        calls[lastCalledMethodName].push(function() { return closure.apply(this, arguments); });
-    };
-
-    this.verify = function(){
-        return expectationMatcher.verify();
-    };
-
-    this.once = function() {
-        lastExpectedBehaviour.setRepeats(1);
-
-        return this;
-    },
-
-    this.twice = function() {
-        lastExpectedBehaviour.setRepeats(2);
-
-        return this;
-    },
-
-    this.threeTimes = function() {
-        lastExpectedBehaviour.setRepeats(3);
-
-        return this;
-    },
-
-    this.toString = function() {
-        return classToMock.name;
-    };
+function Mock(mock, thingToMock, expectationMatcher) {
+    return initMock(mock);
 
     function initMock(mock) {
-        if (typeof(classToMock) == 'function') {
-            createMethods(classToMock, mock);
-            createMethods(new classToMock(), mock);
-        }else if (typeof(classToMock) == 'object') {
-            createMethods(classToMock, mock);
+        addStateVariables(mock);
+        addApiFunctions(mock);
+
+        if (typeof(thingToMock) == 'function') {
+            createMethods(thingToMock, mock);
+            createMethods(new thingToMock(), mock);
+        }else if (typeof(thingToMock) == 'object') {
+            createMethods(thingToMock, mock);
         }else {
-            throw new Error("Cannot mock out a " + typeof(mockedClass));
+            throw new Error("Cannot mock out a " + typeof(thingToMock));
         }
+
+        return mock;
+    }
+
+    function addStateVariables(mock) {
+        mock.recording = false;
+        mock.beingTold = false;
+        mock.lastCalledMethodName = null;
+        mock.lastExpectedBehaviour = null;
+        mock.calls = [];
+        mock.expectationMatcher = expectationMatcher;
+    }
+
+    function addApiFunctions(mock) {
+        mock.expects = expects;
+        mock.tells = tells;
+        mock.toReturn = toReturn;
+        mock.toThrow = toThrow;
+        mock.toExecute = toExecute;
+        mock.verify = verify;
+        mock.once = once;
+        mock.twice = twice;
+        mock.threeTimes = threeTimes;
+        mock.verify = verify;
+        mock.toString = toString;
     }
 
     function createMethods(object, mock) {
@@ -84,24 +50,24 @@ function Mock(classToMock, expectationMatcher) {
 
     function createMethod(method, mock) {
         var mockedFunction = function() {
-            if (recording) {
-                recording = false;
-                lastCalledMethodName = method;
-                lastExpectedBehaviour = new InvocationBehaviour(mock, method, arguments);
+            if (mock.recording) {
+                mock.recording = false;
+                mock.lastCalledMethodName = method;
+                mock.lastExpectedBehaviour = new InvocationBehaviour(mock, method, arguments);
 
-                expectationMatcher.addExpectedMethodCall(lastExpectedBehaviour);
+                mock.expectationMatcher.addExpectedMethodCall(mock.lastExpectedBehaviour);
 
                 return this;
-            } else if (beingTold) {
-                beingTold = false;
-                lastCalledMethodName = method;
+            } else if (mock.beingTold) {
+                mock.beingTold = false;
+                mock.lastCalledMethodName = method;
 
                 return this;
             } else {
-                expectationMatcher.addActualMethodCall(new InvocationBehaviour(mock, method, arguments));
+                mock.expectationMatcher.addActualMethodCall(new InvocationBehaviour(mock, method, arguments));
 
-                if (calls[method] !== undefined) {
-                    var returnFunction = MockHelper.nextOrLast(calls[method]);
+                if (mock.calls[method] !== undefined) {
+                    var returnFunction = MockHelper.nextOrLast(mock.calls[method]);
 
                     if (typeof(returnFunction) == 'function') {
                         return returnFunction.apply(this, arguments);
@@ -115,13 +81,13 @@ function Mock(classToMock, expectationMatcher) {
     }
 
     function initialiseCallArray() {
-        if (lastCalledMethodName == undefined) {
+        if (this.lastCalledMethodName == undefined) {
             throw new Error("Expect not called on mock. Usage is mock.expects().expectedFunctionName()");
         }
 
-        if (calls[lastCalledMethodName] === undefined) {
-            calls[lastCalledMethodName] = [];
-        }        
+        if (this.calls[this.lastCalledMethodName] === undefined) {
+            this.calls[this.lastCalledMethodName] = [];
+        }
     }
 
     function findValueToReturn(valuesToReturn) {
@@ -130,5 +96,60 @@ function Mock(classToMock, expectationMatcher) {
         }
 
         return valuesToReturn;
+    }
+
+    function expects() {
+        this.recording = true;
+        return this;
+    }
+
+    function tells() {
+        this.beingTold = true;
+
+        return this;
+    }
+
+    function toReturn(valueToReturn) {
+        this.toExecute(function() { return findValueToReturn(valueToReturn); });
+    }
+
+    function toThrow(error) {
+        this.toExecute(function() { throw error; });
+    }
+
+    function toExecute(closure) {
+        if (typeof closure !== 'function') {
+            throw Error("Value passed to stub call needs to be a function");
+        }
+
+        initialiseCallArray.apply(this, arguments);
+
+        this.calls[this.lastCalledMethodName].push(function() { return closure.apply(this, arguments); });
+    }
+
+    function verify(){
+        return this.expectationMatcher.verify();
+    }
+
+    function once() {
+        this.lastExpectedBehaviour.setRepeats(1);
+
+        return this;
+    }
+
+    function twice() {
+        this.lastExpectedBehaviour.setRepeats(2);
+
+        return this;
+    }
+
+    function threeTimes() {
+        this.lastExpectedBehaviour.setRepeats(3);
+
+        return this;
+    }
+
+    function toString() {
+        return thingToMock.name;
     }
 }
