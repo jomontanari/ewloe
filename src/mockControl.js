@@ -3,15 +3,15 @@ function MockControl(frameworkIntegration) {
 
     var mocks = [];
 
-    this.createDynamicMock = function(classToMock) {
-        var mock = new Mock(classToMock, new DynamicExpectationMatcher());
+    this.createDynamicMock = function(thingToMock) {
+        var mock = new Mock(thingToMock, new DynamicExpectationMatcher());
         mocks.push(mock);
 
         return mock;
     };
 
-    this.createStrictMock = function(classToMock) {
-        var mock = new Mock(classToMock, new StrictExpectationMatcher());
+    this.createStrictMock = function(thingToMock) {
+        var mock = new Mock(thingToMock, new StrictExpectationMatcher());
         mocks.push(mock);
 
         return mock;

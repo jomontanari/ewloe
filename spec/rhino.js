@@ -1,5 +1,6 @@
 load('/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib/jspec.js');
 load('/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib/jspec.xhr.js');
+load('/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib/jspec.growl.js');
 load('src/arg.js');
 load('src/mockHelper.js');
 load('src/discrepancy.js');
@@ -19,5 +20,6 @@ JSpec
 .exec('spec/unit/mockHelperSpec.js')
 .exec('spec/unit/mockSpec.js')
 .exec('spec/unit/dynamicMockSpec.js')
-.run({ reporter: JSpec.reporters.Terminal, fixturePath: 'spec/fixtures' })
+.exec('spec/integration/mockingEndToEndSpec.js')
+.run({ reporter: JSpec.reporters.Terminal, fixturePath: 'spec/fixtures', failuresOnly : true })
 .report();
