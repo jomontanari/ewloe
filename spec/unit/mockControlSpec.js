@@ -1,4 +1,4 @@
-describe 'MockControl'
+describe 'Mock Control End To End'
     describe "Dynamic Mock Verification"
         describe 'successful verification'
             before_each
@@ -136,6 +136,15 @@ describe 'MockControl'
                 mock.getName(2, 3);
                 mock.getName(2, 3);
                 mock.getName(2, 3);
+
+                mockControl.verify();
+
+                pass();
+            end
+
+            it 'should pass if an expected call is executed with the correct type of arguments'
+                mock.expects().getName(Arg.isA(Person), Arg.isA(String));
+                mock.getName(new Person(), "Hello");
 
                 mockControl.verify();
 

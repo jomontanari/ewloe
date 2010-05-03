@@ -1,13 +1,18 @@
 function StrictExpectationMatcher() {
     var expectedCalls = [];
     var actualCalls = [];
+    var dynamicExpectationMatcher = new DynamicExpectationMatcher();
 
     this.addExpectedMethodCall = function(invocationBehaviour) {
         expectedCalls.push(invocationBehaviour);
+
+        dynamicExpectationMatcher.addExpectedMethodCall(invocationBehaviour);
     };
 
     this.addActualMethodCall = function(invocationBehaviour) {
         actualCalls.push(invocationBehaviour);
+
+        dynamicExpectationMatcher.addActualMethodCall(invocationBehaviour);
     };
 
 
@@ -15,7 +20,7 @@ function StrictExpectationMatcher() {
         var discrepancy = checkForUnexpectedCalls();
 
         if (!discrepancy) {
-            discrepancy = checkExpectations();
+            discrepancy = dynamicExpectationMatcher.verify();
         }
 
         return discrepancy;
@@ -39,26 +44,4 @@ function StrictExpectationMatcher() {
 
         return discrepancy;
     } 
-
-    function checkExpectations() {
-        var discrepancy = null;
-
-        for (var i = 0; i < expectedCalls.length; i++) {
-            var expectedCall = expectedCalls[i];
-
-            var matchingCalls = MockHelper.findAll(actualCalls, function(actualCall) {
-                return expectedCall.equals(actualCall);
-            });
-
-            if (matchingCalls.length === 0) {
-                discrepancy = new Discrepancy("Expected call '" + expectedCall.toString() + "' not executed");
-                break;
-            } else if (matchingCalls.length !== expectedCall.getRepeats()) {
-                discrepancy = new Discrepancy("Expected " + expectedCall.getRepeats() + " call(s) to '" + expectedCall.toString() + "', found " + matchingCalls.length);
-                break;
-            }
-        }
-
-        return discrepancy;
-    }
 }
