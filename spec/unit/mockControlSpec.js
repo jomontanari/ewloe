@@ -1,170 +1,209 @@
 describe 'MockControl'
-    describe 'successful lenient verification'
-        before_each
-            mockControl = new MockControl();
-            mock = mockControl.createDynamicMock(Person);
+    describe "Dynamic Mock Verification"
+        describe 'successful verification'
+            before_each
+                mockControl = new MockControl();
+                mock = mockControl.createDynamicMock(Person);
+            end
+
+            it 'should pass if an unexpected call is made on the mock'
+                mock.getName();
+
+                mockControl.verify();
+
+                pass();
+            end
+
+            it 'should pass if an expected call is executed with correct arguments'
+                mock.expects().getName(2, 3);
+                mock.getName(2, 3);
+
+                mockControl.verify();
+
+                pass();
+            end
+
+            it 'should pass if call is expected twice and is executed twice'
+                mock.expects().getName(2, 3).twice();
+                mock.getName(2, 3);
+                mock.getName(2, 3);
+
+                mockControl.verify();
+
+                pass();
+            end
+
+            it 'should pass if call is expected three times and is executed three times'
+                mock.expects().getName(2, 3).threeTimes();
+                mock.getName(2, 3);
+                mock.getName(2, 3);
+                mock.getName(2, 3);
+
+                mockControl.verify();
+
+                pass();
+            end
+
+            it 'should pass if an expected call is executed with the correct type of arguments'
+                mock.expects().getName(Arg.isA(Function), Arg.isA(String));
+                mock.getName(function(){}, "Hello");
+
+                mockControl.verify();
+
+                pass();
+            end
         end
 
-        after_each
-        end
+        describe 'unsuccessful verification'
+            before_each
+                mockControl = new MockControl({ fail : function(discrepancy) {
+                    var error = new Error();
+                    error.message = discrepancy.getMessage();
+                    throw error;
+                }});
 
-        it 'should pass if an unexpected call is made on the mock'
-            mock.getName();
+                mock = mockControl.createDynamicMock(Person);
+            end
 
-            mockControl.verify();
+            it 'should fail if an expected call is not executed'
+                mock.expects().getName();
 
-            pass();
-        end
+                try {
+                    mockControl.verify();
 
-        it 'should pass if an expected call is executed with correct arguments'
-            mock.expects().getName(2, 3);
-            mock.getName(2, 3);
+                    fail("An error should have been thrown");
+                }catch(e) {
+                    e.message.should.eql "Expected call 'Person.getName()' not executed"
+                }
+            end
 
-            mockControl.verify();
+            it 'should fail if an expected call is executed with the wrong arguments'
+                mock.expects().getName(2, 3);
+                mock.getName(1, 2);
 
-            pass();
-        end
+                try {
+                    mockControl.verify();
 
-        it 'should pass if an expected call is executed with the correct type of arguments'
-            mock.expects().getName(Arg.isA(Function), Arg.isA(String));
-            mock.getName(function(){}, "Hello");
+                    fail("An error should have been thrown");
+                }catch(e) {
+                    e.message.should.eql "Expected call 'Person.getName(2,3)' not executed"
+                }
+            end
 
-            mockControl.verify();
+            it 'should fail if an expected call is note executed the required amount of times'
+                mock.expects().getName(2, 3).twice();
+                mock.getName(2, 3);
 
-            pass();
+                try {
+                    mockControl.verify();
+
+                    fail("An error should have been thrown");
+                }catch(e) {
+                    e.message.should.eql "Expected 2 call(s) to 'Person.getName(2,3)', found 1"
+                }
+            end
         end
     end
 
-    describe 'unsuccessful dynamic verification'
-        before_each
-            mockControl = new MockControl({ fail : function(discrepancy) {
-                var error = new Error();
-                error.message = discrepancy.getMessage();
-                throw error;
-            }});
+    describe "Strict Mocking"
+        describe 'successful verification'
+            before_each
+                mockControl = new MockControl();
+                mock = mockControl.createStrictMock(Person);
+            end
 
-            mock = mockControl.createDynamicMock(Person);
-        end
+            it 'should pass if an expected call is executed with correct arguments'
+                mock.expects().getName(2, 3);
+                mock.getName(2, 3);
 
-        it 'should fail if an expected call is not executed'
-            mock.expects().getName();
-
-            try {
-                mockControl.verify();
-            }catch(e) {
-                e.message.should.eql "Expected call 'Person.getName()' not executed"
-            }
-        end
-
-        it 'should fail if an expected call is executed with the wrong arguments'
-            mock.expects().getName(2, 3);
-            mock.getName(1, 2);
-
-            try {
-                mockControl.verify();
-            }catch(e) {
-                e.message.should.eql "Expected call 'Person.getName(2,3)' not executed"
-            }
-        end
-    end
-
-    describe 'successful strict verification'
-        before_each
-            mockControl = new MockControl();
-            mock = mockControl.createStrictMock(Person);
-        end
-
-        it 'should pass if an expected call is executed with correct arguments'
-            mock.expects().getName(2, 3);
-            mock.getName(2, 3);
-
-            mockControl.verify();
-
-            pass();
-        end
-
-        it 'should pass if call is expected twice and is executed twice'
-            mock.expects().getName(2, 3).twice();
-            mock.getName(2, 3);
-            mock.getName(2, 3);
-
-            mockControl.verify();
-
-            pass();
-        end
-
-        it 'should pass if call is expected three times and is executed three times'
-            mock.expects().getName(2, 3).threeTimes();
-            mock.getName(2, 3);
-            mock.getName(2, 3);
-            mock.getName(2, 3);
-
-            mockControl.verify();
-
-            pass();
-        end
-    end
-
-    describe 'unsuccessful strict verification'
-        before_each
-            mockControl = new MockControl({ fail : function(discrepancy) {
-                var error = new Error();
-                error.message = discrepancy.getMessage();
-                throw error;
-            }});
-
-            mock = mockControl.createStrictMock(Person);
-        end
-
-        it 'should fail if an unexpected call is made'
-            mock.getName();
-
-            try {
-                mockControl.verify();
-                
-                fail("An error should have been thrown");
-            }catch(e) {
-                e.message.should.eql "Unexpected call 'Person.getName()' found"
-            }
-        end
-
-        it 'should fail if an expected call is not executed'
-            mock.expects().getName();
-
-            try {
                 mockControl.verify();
 
-                fail("An error should have been thrown");
-            }catch(e) {
-                e.message.should.eql "Expected call 'Person.getName()' not executed"
-            }
-        end
+                pass();
+            end
 
-        it 'should fail if an expected call is executed with the wrong arguments'
-            mock.expects().getName(2,3);
-            mock.getName(1,2);
+            it 'should pass if call is expected twice and is executed twice'
+                mock.expects().getName(2, 3).twice();
+                mock.getName(2, 3);
+                mock.getName(2, 3);
 
-            try {
                 mockControl.verify();
 
-                fail("An error should have been thrown");
-            }catch(e) {
-                e.message.should.eql "Unexpected call 'Person.getName(1,2)' found"
-            }
-        end
+                pass();
+            end
 
-        it 'should fail if an expected call is executed more than the number of expected times'
-            mock.expects().getName(2,3);
-            mock.getName(2,3);
-            mock.getName(2,3);
+            it 'should pass if call is expected three times and is executed three times'
+                mock.expects().getName(2, 3).threeTimes();
+                mock.getName(2, 3);
+                mock.getName(2, 3);
+                mock.getName(2, 3);
 
-            try {
                 mockControl.verify();
 
-                fail("An error should have been thrown");
-            }catch(e) {
-                e.message.should.eql "Expected 1 call(s) to 'Person.getName(2,3)', found 2"
-            }
+                pass();
+            end
+        end
+
+        describe 'unsuccessful verification'
+            before_each
+                mockControl = new MockControl({ fail : function(discrepancy) {
+                    var error = new Error();
+                    error.message = discrepancy.getMessage();
+                    throw error;
+                }});
+
+                mock = mockControl.createStrictMock(Person);
+            end
+
+            it 'should fail if an unexpected call is made'
+                mock.getName();
+
+                try {
+                    mockControl.verify();
+
+                    fail("An error should have been thrown");
+                }catch(e) {
+                    e.message.should.eql "Unexpected call 'Person.getName()' found"
+                }
+            end
+
+            it 'should fail if an expected call is not executed'
+                mock.expects().getName();
+
+                try {
+                    mockControl.verify();
+
+                    fail("An error should have been thrown");
+                }catch(e) {
+                    e.message.should.eql "Expected call 'Person.getName()' not executed"
+                }
+            end
+
+            it 'should fail if an expected call is executed with the wrong arguments'
+                mock.expects().getName(2,3);
+                mock.getName(1,2);
+
+                try {
+                    mockControl.verify();
+
+                    fail("An error should have been thrown");
+                }catch(e) {
+                    e.message.should.eql "Unexpected call 'Person.getName(1,2)' found"
+                }
+            end
+
+            it 'should fail if an expected call is executed more than the number of expected times'
+                mock.expects().getName(2,3);
+                mock.getName(2,3);
+                mock.getName(2,3);
+
+                try {
+                    mockControl.verify();
+
+                    fail("An error should have been thrown");
+                }catch(e) {
+                    e.message.should.eql "Expected 1 call(s) to 'Person.getName(2,3)', found 2"
+                }
+            end
         end
     end
 end
