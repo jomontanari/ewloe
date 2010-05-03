@@ -1,7 +1,17 @@
 function InvocationBehaviour(caller, method, args) {
+    var repeatCount = 1;
+
     this.getCaller = function() { return caller };
     this.getMethod = function() { return method };
     this.getArgs = function() { return args; };
+
+    this.setRepeats = function(count) {
+        repeatCount = count;
+    };
+
+    this.getRepeats = function() {
+        return repeatCount;
+    };
 
     this.equals = function(other) {
         var argumentMatcher = new ArgumentMatcher();

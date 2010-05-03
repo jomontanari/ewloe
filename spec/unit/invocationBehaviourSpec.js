@@ -3,6 +3,7 @@ describe 'InvocationBehaviour'
         it 'should return true if all parameters are equal'
             var caller = {};
 
+
             var invocationBehaviour1 = new InvocationBehaviour(caller, "setAge", [1]);
             var invocationBehaviour2 = new InvocationBehaviour(caller, "setAge", [1]);
 

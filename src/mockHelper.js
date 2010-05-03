@@ -26,5 +26,12 @@ MockHelper.convertToArray = function(arguments) {
     }
 
     return convertedArguments;
-    
+};
+
+MockHelper.nextOrLast = function(values) {
+    if (values.length === 1) {
+        return values[0];
+    }
+
+    return values.shift();
 };

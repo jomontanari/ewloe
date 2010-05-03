@@ -1,9 +1,9 @@
 function Person() {
     this.getName = function() {
-        return "Unmocked function";        
+        return "Persons Name";
     };
 
     this.getAge = function() {
-        return 1;
+        return 12;
     }
 }

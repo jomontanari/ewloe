@@ -3,8 +3,15 @@ function MockControl(frameworkIntegration) {
 
     var mocks = [];
 
-    this.createMock = function(classToMock) {
-        var mock = new Mock(classToMock, new ExpectationMatcher());
+    this.createDynamicMock = function(classToMock) {
+        var mock = new Mock(classToMock, new DynamicExpectationMatcher());
+        mocks.push(mock);
+
+        return mock;
+    };
+
+    this.createStrictMock = function(classToMock) {
+        var mock = new Mock(classToMock, new StrictExpectationMatcher());
         mocks.push(mock);
 
         return mock;
@@ -14,17 +21,6 @@ function MockControl(frameworkIntegration) {
         for(var i = 0; i < mocks.length; i++) {
             var mock = mocks[i];
             var discrepancy = mock.verify();
-
-            if (discrepancy != null) {
-                framework.fail(discrepancy);
-            }
-        }
-    };
-
-    this.verifyStrict = function() {
-        for(var i = 0; i < mocks.length; i++) {
-            var mock = mocks[i];
-            var discrepancy = mock.verifyStrict();
 
             if (discrepancy != null) {
                 framework.fail(discrepancy);

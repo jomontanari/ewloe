@@ -1,6 +1,6 @@
 describe 'Mock'
     before_each
-        mock = new Mock(Person, new ExpectationMatcher());
+        mock = new Mock(Person, new DynamicExpectationMatcher());
     end
 
     describe 'Mocking'
@@ -44,16 +44,24 @@ describe 'Mock'
             }
         end
 
-        it 'returns values in the order they were set'
-            mock.expects().getAge().toReturn(11).toReturn(12);
+        it 'should return the same value each time the function is called if the return value is not an array'
+            mock.expects().getAge().toReturn(11);
+
+            mock.getAge().should.eql 11
+            mock.getAge().should.eql 11
+        end
+
+        it 'should return the next value each time the function is called if the return value is an array'
+            mock.expects().getAge().toReturn([11,12,13]);
 
             mock.getAge().should.eql 11
             mock.getAge().should.eql 12
+            mock.getAge().should.eql 13
         end
     end
 
     describe 'Verification'
-        it 'should ask the expectation matcher to perform strict verification'
+        it 'should ask the expectation matcher to perform verification'
             var verifyCalled = false;
 
             var expectationMatcherStub = {
@@ -64,7 +72,7 @@ describe 'Mock'
 
             mock = new Mock(Person, expectationMatcherStub);
 
-            mock.verifyStrict();
+            mock.verify();
 
             verifyCalled.should.be_true
         end

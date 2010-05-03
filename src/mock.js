@@ -1,6 +1,8 @@
 function Mock(classToMock, expectationMatcher) {
     var recording = false;
-    var lastExpectedFunctionName = null;
+    var beingTold = false;
+    var lastCalledMethodName = null;
+    var lastExpectedBehaviour = null;
 
     var calls = [];
 
@@ -11,12 +13,18 @@ function Mock(classToMock, expectationMatcher) {
         return this;
     };
 
+    this.tells = function() {
+        beingTold = true;
+
+        return this;
+    };
+    
     this.toReturn = function(valueToReturn) {
-        return this.toExecute(function() { return valueToReturn; });
+        this.toExecute(function() { return findValueToReturn(valueToReturn); });
     };
 
     this.toThrow = function(error) {
-        return this.toExecute(function() { throw error; });
+        this.toExecute(function() { throw error; });
     };
 
     this.toExecute = function(closure) {
@@ -25,19 +33,31 @@ function Mock(classToMock, expectationMatcher) {
         }
 
         initialiseCallArray();
-        
-        calls[lastExpectedFunctionName].push(function() { return closure.apply(this, arguments); });
 
-        return this;
-    };
-
-    this.verifyStrict = function() {
-        return expectationMatcher.verify(true);
+        calls[lastCalledMethodName].push(function() { return closure.apply(this, arguments); });
     };
 
     this.verify = function(){
-        return expectationMatcher.verify(false);
+        return expectationMatcher.verify();
     };
+
+    this.once = function() {
+        lastExpectedBehaviour.setRepeats(1);
+
+        return this;
+    },
+
+    this.twice = function() {
+        lastExpectedBehaviour.setRepeats(2);
+
+        return this;
+    },
+
+    this.threeTimes = function() {
+        lastExpectedBehaviour.setRepeats(3);
+
+        return this;
+    },
 
     this.toString = function() {
         return classToMock.name;
@@ -66,19 +86,25 @@ function Mock(classToMock, expectationMatcher) {
         var mockedFunction = function() {
             if (recording) {
                 recording = false;
-                lastExpectedFunctionName = method;
+                lastCalledMethodName = method;
+                lastExpectedBehaviour = new InvocationBehaviour(mock, method, arguments);
 
-                expectationMatcher.addExpectedMethodCall(new InvocationBehaviour(mock, method, arguments));
+                expectationMatcher.addExpectedMethodCall(lastExpectedBehaviour);
+
+                return this;
+            } else if (beingTold) {
+                beingTold = false;
+                lastCalledMethodName = method;
 
                 return this;
             } else {
                 expectationMatcher.addActualMethodCall(new InvocationBehaviour(mock, method, arguments));
 
-                if (calls[method] != null) {
-                    var returnValue = calls[method].shift();
+                if (calls[method] !== undefined) {
+                    var returnFunction = MockHelper.nextOrLast(calls[method]);
 
-                    if (typeof(returnValue) == 'function') {
-                        return returnValue.apply(this, arguments);
+                    if (typeof(returnFunction) == 'function') {
+                        return returnFunction.apply(this, arguments);
                     }
                 }
             }
@@ -89,12 +115,20 @@ function Mock(classToMock, expectationMatcher) {
     }
 
     function initialiseCallArray() {
-        if (lastExpectedFunctionName == undefined) {
+        if (lastCalledMethodName == undefined) {
             throw new Error("Expect not called on mock. Usage is mock.expects().expectedFunctionName()");
         }
 
-        if (calls[lastExpectedFunctionName] === undefined) {
-            calls[lastExpectedFunctionName] = [];
+        if (calls[lastCalledMethodName] === undefined) {
+            calls[lastCalledMethodName] = [];
         }        
+    }
+
+    function findValueToReturn(valuesToReturn) {
+        if (valuesToReturn instanceof Array) {
+            return valuesToReturn.shift();
+        }
+
+        return valuesToReturn;
     }
 }

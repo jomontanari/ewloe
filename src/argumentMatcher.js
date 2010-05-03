@@ -3,8 +3,12 @@ function ArgumentMatcher() {
 
     initMatchers();
 
-    this.areEqual = function(args1, args2) {
-        return checkArguments(args1, args2);
+    this.areEqual = function(expected, actual) {
+        if (expected.length != actual.length) {
+            return false;
+            
+        }
+        return checkArguments(expected, actual);
     };
 
     function initMatchers() {
@@ -12,25 +16,26 @@ function ArgumentMatcher() {
         typeMatchers[String] = matchObjects;
         typeMatchers[Boolean] = matchObjects;
         typeMatchers[Number] = matchObjects;
+        typeMatchers[Arg] = matchType;
     }
 
-    function checkArguments(args1, args2) {
-        var typeMatcher = typeMatchers[args1.constructor];
+    function checkArguments(expected, actual) {
+        var typeMatcher = typeMatchers[expected.constructor];
 
-        return typeMatcher(args1, args2);
+        return typeMatcher(expected, actual);
     }
 
-    function matchArrays(object1, object2) {
-        if ((object1 && !object2) || (!object1 && object2)) {
+    function matchArrays(expected, actual) {
+        if ((expected && !actual) || (!expected && actual)) {
             return false;
         }
 
-        if (object1.length != object2.length) {
+        if (expected.length != actual.length) {
             return false;
         }
 
-        for (var i = 0; i < object1.length; i++) {
-            if (!checkArguments(object1[i], object2[i])) {
+        for (var i = 0; i < expected.length; i++) {
+            if (!checkArguments(expected[i], actual[i])) {
                 return false;
             }
         }
@@ -38,9 +43,11 @@ function ArgumentMatcher() {
         return true;
     }
 
-    function matchObjects(object1, object2) {
-        return object1 == object2;
+    function matchObjects(expected, actual) {
+        return expected == actual;
+    }
+
+    function matchType(expected, actual) {
+        return expected.expectedType === actual.constructor;
     }
 }
-
-
