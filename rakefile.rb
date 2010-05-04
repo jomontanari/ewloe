@@ -1,6 +1,6 @@
-require "tools/jsmin"
+#require "tools/jsmin"
 
-task :default => [:combine]
+task :default => [:append_files]
 
 task :clean do
   if (File.exist?("mockit.js"))
@@ -8,10 +8,8 @@ task :clean do
   end
 end
 
-task :combine => [:clean, :append_files, :minify] do
-end
-
 task :append_files do
+  puts 'Appending files'
   File.open("mockit.js", "w") do |output_file|
     Dir["src/*.js"].each do |src_file|
       f = File.open(src_file, 'r+');
@@ -20,11 +18,11 @@ task :append_files do
         output_file.write(line)
       end
 
+      puts "Written file"
       output_file.write("\n")
     end
   end
 end
 
 task :minify do
-  jsmin()
 end

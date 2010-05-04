@@ -3,5 +3,11 @@ function FrameworkIntegration() {
         if (JSpec != undefined) {
             JSpec.fail(discrepancy.getMessage());
         }
+    };
+
+    this.pass = function(discrepancy) {
+        if (JSpec != undefined) {
+            JSpec.pass();
+        }
     }
 }
