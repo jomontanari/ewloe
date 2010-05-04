@@ -1,4 +1,4 @@
-function Mock(mock, thingToMock, expectationMatcher) {
+function MockInitialiser(mock, thingToMock, expectationMatcher) {
     return initMock(mock);
 
     function initMock(mock) {
