@@ -1,15 +1,15 @@
 function MockControl(frameworkIntegration) {
     var framework = frameworkIntegration || new FrameworkIntegration();
-
+    var mockInitialiser = new MockInitialiser();
     var mocks = [];
 
     this.createDynamicMock = function(thingToMock) {
         var mock = null;
 
         if (typeof(thingToMock) == 'object') {
-            mock = new Mock(thingToMock, thingToMock, new DynamicExpectationMatcher());
+            mock = mockInitialiser.initDynamicMock(thingToMock, thingToMock);
         } else {
-            mock = new Mock({}, thingToMock, new DynamicExpectationMatcher());
+            mock = mockInitialiser.initDynamicMock({}, thingToMock);
         }
 
         mocks.push(mock);
@@ -21,9 +21,9 @@ function MockControl(frameworkIntegration) {
         var mock = null;
 
         if (typeof(thingToMock) == 'object') {
-            mock = new Mock(thingToMock, thingToMock, new StrictExpectationMatcher());
+            mock = mockInitialiser.initStrictMock(thingToMock, thingToMock);
         } else {
-            mock = new Mock({}, thingToMock, new StrictExpectationMatcher());
+            mock = mockInitialiser.initStrictMock({}, thingToMock);
         }
 
         mocks.push(mock);
@@ -32,7 +32,7 @@ function MockControl(frameworkIntegration) {
     };
 
     this.verify = function() {
-        for(var i = 0; i < mocks.length; i++) {
+        for (var i = 0; i < mocks.length; i++) {
             var mock = mocks[i];
             var discrepancy = mock.verify();
 

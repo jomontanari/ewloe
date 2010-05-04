@@ -24,7 +24,8 @@ describe 'Mocking End To End'
             end
 
             it 'should pass if call is expected twice and is executed twice'
-                mock.expects().getName(2, 3).twice();
+                mock.expects().getName(2,
+                        3).twice();
                 mock.getName(2, 3);
                 mock.getName(2, 3);
 

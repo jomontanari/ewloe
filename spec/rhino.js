@@ -8,7 +8,7 @@ load('src/argumentMatcher.js');
 load('src/invocationBehaviour.js');
 load('src/strictExpectationMatcher.js');
 load('src/dynamicExpectationMatcher.js');
-load('src/mock.js');
+load('src/mockInitialiser.js');
 load('src/frameworkIntegration.js');
 load('src/mockControl.js');
 load('test/person.js');
@@ -18,7 +18,7 @@ JSpec
 .exec('spec/unit/invocationBehaviourSpec.js')
 .exec('spec/unit/mockControlSpec.js')
 .exec('spec/unit/mockHelperSpec.js')
-.exec('spec/unit/mockSpec.js')
+.exec('spec/unit/mockInitialiserSpec.js')
 .exec('spec/unit/dynamicMockSpec.js')
 .exec('spec/integration/mockingEndToEndSpec.js')
 .run({ reporter: JSpec.reporters.Terminal, fixturePath: 'spec/fixtures', failuresOnly : true })
