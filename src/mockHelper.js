@@ -1,7 +1,7 @@
 function MockHelper() {}
 
 MockHelper.isPublicMethod = function(object, method) {
-    return typeof object[method] === 'function' && object.hasOwnProperty(method);
+    return typeof object[method] === 'function';
 };
 
 MockHelper.findAll = function(array, predicate) {

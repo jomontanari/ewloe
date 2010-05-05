@@ -49,7 +49,7 @@ describe 'MockInitialiser'
         end
 
         it 'should return the next value each time the function is called if the return value is an array'
-            mock.expects().getAge().toReturn([11,12,13]);
+            mock.expects().getAge().toReturnNext([11,12,13]);
 
             mock.getAge().should.eql 11
             mock.getAge().should.eql 12
@@ -100,15 +100,15 @@ describe 'MockInitialiser'
             }
         end
 
-        it 'should return the same value each time the function is called if the return value is not an array'
+        it 'should return the same value each time the function is called'
             mock.expects().getAge().toReturn(11);
 
             mock.getAge().should.eql 11
             mock.getAge().should.eql 11
         end
 
-        it 'should return the next value each time the function is called if the return value is an array'
-            mock.expects().getAge().toReturn([11,12,13]);
+        it 'should return the next value each time the function is called'
+            mock.expects().getAge().toReturnNext([11,12,13]);
 
             mock.getAge().should.eql 11
             mock.getAge().should.eql 12

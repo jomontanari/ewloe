@@ -47,6 +47,7 @@ function MockInitialiser() {
         mock.expects = expects;
         mock.tells = tells;
         mock.toReturn = toReturn;
+        mock.toReturnNext = toReturnNext;
         mock.toThrow = toThrow;
         mock.toExecute = toExecute;
         mock.verify = verify;
@@ -111,17 +112,6 @@ function MockInitialiser() {
         }
     }
 
-    function findValueToReturn(valuesToReturn) {
-        if (valuesToReturn instanceof Array) {
-            if (valuesToReturn.length == 1) {
-                return valuesToReturn[0];    
-            }
-            return valuesToReturn.shift();
-        }
-
-        return valuesToReturn;
-    }
-
     function expects() {
         this.recording = true;
         return this;
@@ -134,7 +124,16 @@ function MockInitialiser() {
     }
 
     function toReturn(valueToReturn) {
-        this.toExecute(function() { return findValueToReturn(valueToReturn); });
+        this.toExecute(function() { return valueToReturn; });
+    }
+
+    function toReturnNext(valuesToReturn) {
+        this.toExecute(function() {
+            if (valuesToReturn.length == 1) {
+                return valuesToReturn[0];
+            }
+            return valuesToReturn.shift();
+        });
     }
 
     function toThrow(error) {

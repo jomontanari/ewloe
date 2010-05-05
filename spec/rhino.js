@@ -1,7 +1,6 @@
 load('/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib/jspec.js');
 load('/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib/jspec.xhr.js');
 load('/Library/Ruby/Gems/1.8/gems/jspec-4.1.0/lib/jspec.growl.js');
-load('src/arg.js');
 load('src/mockHelper.js');
 load('src/discrepancy.js');
 load('src/argumentMatcher.js');

@@ -1,3 +1,21 @@
+function Arg(){}
+
+function TypeArg(type) {
+    this.expectedType = type;
+}
+
+function FunctionArg(predicate) {
+    this.predicate = predicate;
+}
+
+Arg.isA = function(type) {
+    return new TypeArg(type);
+};
+
+Arg.satisfies = function(predicate) {
+    return new FunctionArg(predicate);
+};
+
 function ArgumentMatcher() {
     var typeMatchers = {};
 
@@ -13,14 +31,16 @@ function ArgumentMatcher() {
 
     function initMatchers() {
         typeMatchers[Array] = matchArrays;
-        typeMatchers[String] = matchObjects;
-        typeMatchers[Boolean] = matchObjects;
-        typeMatchers[Number] = matchObjects;
-        typeMatchers[Arg] = matchType;
+        typeMatchers[TypeArg] = matchType;
+        typeMatchers[FunctionArg] = matchPredicate;
     }
 
     function checkArguments(expected, actual) {
-        var typeMatcher = typeMatchers[expected.constructor];
+        if (expected == null) {
+            return actual == null;    
+        }
+
+        var typeMatcher = typeMatchers[expected.constructor] || matchObjects;
 
         return typeMatcher(expected, actual);
     }
@@ -49,5 +69,9 @@ function ArgumentMatcher() {
 
     function matchType(expected, actual) {
         return expected.expectedType === actual.constructor;
+    }
+
+    function matchPredicate(expected, actual) {
+        return expected.predicate(actual);
     }
 }
