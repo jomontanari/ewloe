@@ -52,7 +52,7 @@ describe 'InvocationBehaviour'
             var invocationBehaviour = new InvocationBehaviour(caller, 'getAge', [1, 'test']);
             var description = invocationBehaviour.toString();
 
-            description.should.eql "Person.getAge(1,test)"
+            description.should.eql "Person.getAge(1, 'test')"
         end
     end
 end

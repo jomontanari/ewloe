@@ -105,7 +105,7 @@ describe 'Mocking End To End'
 
                     fail("An error should have been thrown");
                 }catch(e) {
-                    e.message.should.eql "Expected call 'Person.getName(2,3)' not executed"
+                    e.message.should.eql "Expected call 'Person.getName(2, 3)' not executed"
                 }
             end
 
@@ -118,7 +118,7 @@ describe 'Mocking End To End'
 
                     fail("An error should have been thrown");
                 }catch(e) {
-                    e.message.should.eql "Expected 2 call(s) to 'Person.getName(2,3)', found 1"
+                    e.message.should.eql "Expected 2 call(s) to 'Person.getName(2, 3)', found 1"
                 }
             end
         end
@@ -226,7 +226,7 @@ describe 'Mocking End To End'
 
                     fail("An error should have been thrown");
                 }catch(e) {
-                    e.message.should.eql "Unexpected call 'Person.getName(1,2)' found"
+                    e.message.should.eql "Unexpected call 'Person.getName(1, 2)' found"
                 }
             end
 
@@ -240,7 +240,7 @@ describe 'Mocking End To End'
 
                     fail("An error should have been thrown");
                 }catch(e) {
-                    e.message.should.eql "Expected 1 call(s) to 'Person.getName(2,3)', found 2"
+                    e.message.should.eql "Expected 1 call(s) to 'Person.getName(2, 3)', found 2"
                 }
             end
         end

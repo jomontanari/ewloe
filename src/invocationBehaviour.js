@@ -25,7 +25,7 @@ function InvocationBehaviour(caller, method, args) {
         var toStr = caller + "." + method;
 
         if (args.length !== 0) {
-            toStr = toStr + '(' + formatArgs() + ')';
+            toStr = toStr + "(" + formatArgs() + ")";
         }else {
             toStr = toStr + "()";
         }
@@ -37,7 +37,11 @@ function InvocationBehaviour(caller, method, args) {
         var toStr = "";
 
         for (var i = 0; i < args.length; i++) {
-            toStr += args[i] + ",";
+            if (typeof(args[i]) === 'string') {
+                toStr += "'" + args[i] + "', ";
+            } else {
+                toStr += args[i] + ", ";
+            }
         }
 
         return toStr.substring(0, toStr.lastIndexOf(","));

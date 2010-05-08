@@ -140,5 +140,13 @@ describe 'MockInitialiser'
 
             mock.getName().should.eql "Persons Name"
         end
+
+        it 'should remove all added instance variables from the object on verify'
+            mock.hasOwnProperty('recording').should.be_true
+
+            mock.verify();
+
+            mock.hasOwnProperty('recording').should.be_false
+        end
     end
 end

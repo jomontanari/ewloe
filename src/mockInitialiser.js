@@ -1,32 +1,32 @@
 function MockInitialiser() {
     this.initStrictMock = function(mock, thingToMock) {
-        return initMock(mock, thingToMock, new StrictExpectationMatcher());
+        return initMock(mock, thingToMock, true);
     };
 
     this.initDynamicMock = function(mock, thingToMock) {
-        return initMock(mock, thingToMock, new DynamicExpectationMatcher());
+        return initMock(mock, thingToMock, false);
     };
 
-    function initMock(mock, thingToMock, expectationMatcher) {
-        addStateVariables(mock, expectationMatcher);
+    function initMock(mock, thingToMock, strict) {
         backupOriginalFunctions(mock, thingToMock);
+        addStateVariables(mock, strict);
         replaceFunctions(mock, thingToMock);
-        addApiFunctions(mock, thingToMock);
+        addApiFunctions(mock, thingToMock, strict);
 
         return mock;
     }
 
-    function addStateVariables(mock, expectationMatcher) {
+    function addStateVariables(mock, strict) {
         mock.recording = false;
         mock.beingTold = false;
-        mock.lastCalledMethodName = null;
         mock.lastMockedBehaviour = null;
         mock.calls = [];
-        mock.originalFunctions = {};
-        mock.expectationMatcher = expectationMatcher;
+        mock.expectationMatcher = strict ? new StrictExpectationMatcher() : new DynamicExpectationMatcher();
     }
 
     function backupOriginalFunctions(mock, thingToMock) {
+        mock.originalFunctions = {};
+
         for (var method in thingToMock) {
             mock.originalFunctions[method] = thingToMock[method];
         }
@@ -43,9 +43,8 @@ function MockInitialiser() {
         }
     }
     
-    function addApiFunctions(mock, thingToMock) {
+    function addApiFunctions(mock, thingToMock, strict) {
         mock.expects = expects;
-        mock.tells = tells;
         mock.toReturn = toReturn;
         mock.toReturnNext = toReturnNext;
         mock.toThrow = toThrow;
@@ -56,9 +55,14 @@ function MockInitialiser() {
         mock.threeTimes = threeTimes;
         mock.verify = verify;
         mock.restoreOriginalFunctions = restoreOriginalFunctions;
-        
+        mock.removeAddedApi = removeAddedApi;
+
+        if (!strict) {
+            mock.tells = tells;
+        }
+
         mock.toString = function toString() {
-            return thingToMock.name;
+            return thingToMock.name || typeof(thingToMock);
         }
     }
 
@@ -163,8 +167,12 @@ function MockInitialiser() {
     }
 
     function verify(){
+        var verificationSuccessful = this.expectationMatcher.verify();
+
+        this.removeAddedApi();
         this.restoreOriginalFunctions();
-        return this.expectationMatcher.verify();
+
+        return verificationSuccessful;
     }
 
     function once() {
@@ -189,5 +197,30 @@ function MockInitialiser() {
         for (var method in this.originalFunctions) {
             this[method] = this.originalFunctions[method];
         }
+
+        delete this.originalFunctions;
+        delete this.restoreOriginalFunctions;
+    }
+
+    function removeAddedApi() {
+        delete this.recording;
+        delete this.beingTold;
+        delete this.lastMockedBehaviour;
+        delete this.calls;
+        delete this.expectationMatcher;
+
+        delete this.expects;
+        delete this.toReturn;
+        delete this.toReturnNext;
+        delete this.toThrow;
+        delete this.toExecute;
+        delete this.verify;
+        delete this.once;
+        delete this.twice;
+        delete this.threeTimes;
+        delete this.verify;
+        delete this.removeAddedApi;
+        delete this.tells;
+        delete this.toString;
     }
 }
