@@ -17,10 +17,9 @@
 			function runSuites() {
 				JSpec
 				.exec('unit/argumentMatcherSpec.js')
-//				.exec('unit/invocationBehaviourSpec.js')
-//				.exec('unit/mockControlSpec.js')
-//				.exec('unit/mockHelperSpec.js')
-//				.exec('unit/mockSpec.js')
+				.exec('unit/invocationBehaviourSpec.js')
+				.exec('unit/mockControlSpec.js')
+				.exec('unit/mockHelperSpec.js')
 				.run({ fixturePath: 'fixtures' })
 				.report()
 			}

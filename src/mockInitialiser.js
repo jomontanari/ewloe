@@ -20,7 +20,7 @@ function MockInitialiser() {
         mock.recording = false;
         mock.beingTold = false;
         mock.lastCalledMethodName = null;
-        mock.lastExpectedBehaviour = null;
+        mock.lastMockedBehaviour = null;
         mock.calls = [];
         mock.originalFunctions = {};
         mock.expectationMatcher = expectationMatcher;
@@ -74,25 +74,32 @@ function MockInitialiser() {
         var mockedFunction = function() {
             if (mock.recording) {
                 mock.recording = false;
-                mock.lastCalledMethodName = method;
-                mock.lastExpectedBehaviour = new InvocationBehaviour(mock, method, arguments);
+                mock.lastMockedBehaviour = new InvocationBehaviour(mock, method, MockHelper.convertToArray(arguments));
 
-                mock.expectationMatcher.addExpectedMethodCall(mock.lastExpectedBehaviour);
+                mock.expectationMatcher.addExpectedMethodCall(mock.lastMockedBehaviour);
 
                 return this;
             } else if (mock.beingTold) {
                 mock.beingTold = false;
-                mock.lastCalledMethodName = method;
+                mock.lastMockedBehaviour = new InvocationBehaviour(mock, method, MockHelper.convertToArray(arguments));
 
                 return this;
             } else {
-                mock.expectationMatcher.addActualMethodCall(new InvocationBehaviour(mock, method, arguments));
+                var actualMethodBehaviour = new InvocationBehaviour(mock, method, MockHelper.convertToArray(arguments));
 
-                if (mock.calls[method] !== undefined) {
-                    var returnFunction = MockHelper.nextOrLast(mock.calls[method]);
+                mock.expectationMatcher.addActualMethodCall(actualMethodBehaviour);
 
-                    if (typeof(returnFunction) == 'function') {
-                        return returnFunction.apply(this, arguments);
+                var methodCalls = mock.calls[method];
+
+                if (methodCalls !== undefined) {
+                    var argumentMatcher = new ArgumentMatcher();
+
+                    var result = MockHelper.find(methodCalls, function(result) {
+                        return argumentMatcher.areEqual(result.args, actualMethodBehaviour.getArgs());
+                    });
+
+                    if (result != null) {
+                        return result.action.apply(this, arguments);
                     }
                 }
             }
@@ -103,12 +110,14 @@ function MockInitialiser() {
     }
 
     function initialiseCallArray() {
-        if (this.lastCalledMethodName == undefined) {
+        if (this.lastMockedBehaviour == undefined) {
             throw new Error("Expect not called on mock. Usage is mock.expects().expectedFunctionName()");
         }
 
-        if (this.calls[this.lastCalledMethodName] === undefined) {
-            this.calls[this.lastCalledMethodName] = [];
+        var methodName = this.lastMockedBehaviour.getMethod();
+        
+        if (this.calls[methodName] === undefined) {
+            this.calls[methodName] = [];
         }
     }
 
@@ -147,7 +156,10 @@ function MockInitialiser() {
 
         initialiseCallArray.apply(this, arguments);
 
-        this.calls[this.lastCalledMethodName].push(function() { return closure.apply(this, arguments); });
+        this.calls[this.lastMockedBehaviour.getMethod()].push({
+            args : this.lastMockedBehaviour.getArgs(),
+            action : function() { return closure.apply(this, arguments); }
+        });
     }
 
     function verify(){
@@ -156,19 +168,19 @@ function MockInitialiser() {
     }
 
     function once() {
-        this.lastExpectedBehaviour.setRepeats(1);
+        this.lastMockedBehaviour.setRepeats(1);
 
         return this;
     }
 
     function twice() {
-        this.lastExpectedBehaviour.setRepeats(2);
+        this.lastMockedBehaviour.setRepeats(2);
 
         return this;
     }
 
     function threeTimes() {
-        this.lastExpectedBehaviour.setRepeats(3);
+        this.lastMockedBehaviour.setRepeats(3);
 
         return this;
     }

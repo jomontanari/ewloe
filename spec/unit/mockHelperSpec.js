@@ -1,4 +1,13 @@
 describe 'MockHelper'
+    it 'should return the first value matched by the predicate'
+        var matchedValue = MockHelper.find([1,2,3,4], function(value) {
+            return value % 2 === 0;
+        });
+
+
+        matchedValue.should.eql 2
+    end
+
     it 'should return all values matched by the predicate'
         var matchedValues = MockHelper.findAll([1,2,3,4], function(value) {
             return value % 2 === 0;

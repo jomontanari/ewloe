@@ -23,9 +23,19 @@ describe 'Mocking End To End'
                 pass();
             end
 
+            it 'should pass allow multiple expects on the same method with different arguments'
+                mock.expects().getName(1, 2);
+                mock.expects().getName(2, 3);
+                mock.getName(1, 2);
+                mock.getName(2, 3);
+
+                mockControl.verify();
+
+                pass();
+            end
+
             it 'should pass if call is expected twice and is executed twice'
-                mock.expects().getName(2,
-                        3).twice();
+                mock.expects().getName(2, 3).twice();
                 mock.getName(2, 3);
                 mock.getName(2, 3);
 
@@ -52,6 +62,14 @@ describe 'Mocking End To End'
                 mockControl.verify();
 
                 pass();
+            end
+
+            it 'should return the value set on the stubbed call'
+                mock.tells().getName().toReturn("I am a stubbed result");
+
+                var result = mock.getName();
+
+                result.should.eql "I am a stubbed result"
             end
         end
 
@@ -115,6 +133,17 @@ describe 'Mocking End To End'
 
             it 'should pass if an expected call is executed with correct arguments'
                 mock.expects().getName(2, 3);
+                mock.getName(2, 3);
+
+                mockControl.verify();
+
+                pass();
+            end
+
+            it 'should pass allow multiple expects on the same method with different arguments'
+                mock.expects().getName(1, 2);
+                mock.expects().getName(2, 3);
+                mock.getName(1, 2);
                 mock.getName(2, 3);
 
                 mockControl.verify();

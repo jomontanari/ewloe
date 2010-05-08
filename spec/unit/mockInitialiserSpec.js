@@ -56,6 +56,14 @@ describe 'MockInitialiser'
             mock.getAge().should.eql 13
             mock.getAge().should.eql 13
         end
+
+        it 'should take the passed arguments into account when deciding which value to return'
+            mock.expects().getAge(1).toReturn(5);
+            mock.expects().getAge(2).toReturn(6);
+
+            mock.getAge(1).should.eql 5
+            mock.getAge(2).should.eql 6
+        end
     end
 
     describe "Mocking Instances"
@@ -114,6 +122,14 @@ describe 'MockInitialiser'
             mock.getAge().should.eql 12
             mock.getAge().should.eql 13
             mock.getAge().should.eql 13
+        end
+
+        it 'should take the passed arguments into account when deciding which value to return'
+            mock.expects().getAge(1).toReturn(5);
+            mock.expects().getAge(2).toReturn(6);
+
+            mock.getAge(1).should.eql 5
+            mock.getAge(2).should.eql 6
         end
 
         it 'should reset all the mocked functions back to the original on verify'

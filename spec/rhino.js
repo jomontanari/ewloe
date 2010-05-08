@@ -18,7 +18,6 @@ JSpec
 .exec('spec/unit/mockControlSpec.js')
 .exec('spec/unit/mockHelperSpec.js')
 .exec('spec/unit/mockInitialiserSpec.js')
-.exec('spec/unit/dynamicMockSpec.js')
 .exec('spec/integration/mockingEndToEndSpec.js')
 .run({ reporter: JSpec.reporters.Terminal, fixturePath: 'spec/fixtures', failuresOnly : true })
 .report();

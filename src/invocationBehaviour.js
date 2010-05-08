@@ -18,7 +18,7 @@ function InvocationBehaviour(caller, method, args) {
 
         return caller == other.getCaller() &&
                method === other.getMethod() &&
-               argumentMatcher.areEqual(MockHelper.convertToArray(args), MockHelper.convertToArray(other.getArgs()));
+               argumentMatcher.areEqual(args, other.getArgs());
     };
 
     this.toString = function() {

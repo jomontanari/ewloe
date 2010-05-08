@@ -4,6 +4,20 @@ MockHelper.isPublicMethod = function(object, method) {
     return typeof object[method] === 'function';
 };
 
+MockHelper.find = function(array, predicate) {
+    var returnValues = [];
+
+    for (var i = 0; i < array.length; i++) {
+        var currentItem = array[i];
+
+        if (predicate(currentItem)) {
+            return currentItem;
+        }
+    }
+
+    return null;
+};
+
 MockHelper.findAll = function(array, predicate) {
     var returnValues = [];
 
