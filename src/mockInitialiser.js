@@ -89,7 +89,7 @@ function MockInitialiser() {
                 mock.expectationMatcher.addActualMethodCall(new InvocationBehaviour(mock, method, arguments));
 
                 if (mock.calls[method] !== undefined) {
-                    var returnFunction = mock.calls[method];
+                    var returnFunction = MockHelper.nextOrLast(mock.calls[method]);
 
                     if (typeof(returnFunction) == 'function') {
                         return returnFunction.apply(this, arguments);
@@ -100,6 +100,16 @@ function MockInitialiser() {
 
         mockedFunction.name = method;
         mock[method] = mockedFunction;
+    }
+
+    function initialiseCallArray() {
+        if (this.lastCalledMethodName == undefined) {
+            throw new Error("Expect not called on mock. Usage is mock.expects().expectedFunctionName()");
+        }
+
+        if (this.calls[this.lastCalledMethodName] === undefined) {
+            this.calls[this.lastCalledMethodName] = [];
+        }
     }
 
     function expects() {
@@ -135,7 +145,9 @@ function MockInitialiser() {
             throw Error("Value passed to stub call needs to be a function");
         }
 
-        this.calls[this.lastCalledMethodName] = function() { return closure.apply(this, arguments); };
+        initialiseCallArray.apply(this, arguments);
+
+        this.calls[this.lastCalledMethodName].push(function() { return closure.apply(this, arguments); });
     }
 
     function verify(){
