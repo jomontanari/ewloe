@@ -3,14 +3,13 @@
 task :default => [:append_files]
 
 task :clean do
-  if (File.exist?("mockit.js"))
-    File.delete("mockit.js")
+  if (File.exist?("ewloe.js"))
+    File.delete("ewloe.js")
   end
 end
 
 task :append_files do
-  puts 'Appending files'
-  File.open("mockit.js", "w") do |output_file|
+  File.open("ewloe.js", "w") do |output_file|
     Dir["src/*.js"].each do |src_file|
       f = File.open(src_file, 'r+');
 
@@ -18,10 +17,11 @@ task :append_files do
         output_file.write(line)
       end
 
-      puts "Written file"
       output_file.write("\n")
     end
   end
+
+  puts "Complete"
 end
 
 task :minify do

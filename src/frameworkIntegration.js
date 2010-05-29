@@ -1,6 +1,6 @@
 function FrameworkIntegration() {
     this.fail = function(discrepancy) {
-        fail(discrepancy.getMessage());
+        JSpec.fail(discrepancy.getMessage());
     };
 
     this.pass = function(discrepancy) {

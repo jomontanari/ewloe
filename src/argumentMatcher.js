@@ -2,10 +2,18 @@ function Arg(){}
 
 function TypeArg(type) {
     this.expectedType = type;
+
+    this.toString = function() {
+        return type.name;
+    }
 }
 
 function FunctionArg(predicate) {
     this.predicate = predicate;
+}
+
+function PropertiesMatch(expected) {
+    this.expectedValues = expected;
 }
 
 Arg.isA = function(type) {
@@ -14,6 +22,10 @@ Arg.isA = function(type) {
 
 Arg.satisfies = function(predicate) {
     return new FunctionArg(predicate);
+};
+
+Arg.sameAs = function(expected) {
+    return new PropertiesMatch(expected);    
 };
 
 function ArgumentMatcher() {
@@ -33,6 +45,7 @@ function ArgumentMatcher() {
         typeMatchers[Array] = matchArrays;
         typeMatchers[TypeArg] = matchType;
         typeMatchers[FunctionArg] = matchPredicate;
+        typeMatchers[PropertiesMatch] = matchProperties;
     }
 
     function checkArguments(expected, actual) {
@@ -73,5 +86,15 @@ function ArgumentMatcher() {
 
     function matchPredicate(expected, actual) {
         return expected.predicate(actual);
+    }
+
+    function matchProperties(expected, actual) {
+        for (var propertyName in expected) {
+            if (expected["propertyName"] != actual["propertyName"]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
