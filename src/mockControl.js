@@ -40,7 +40,5 @@ function MockControl(frameworkIntegration) {
                 framework.fail(discrepancy);
             }
         }
-
-        framework.pass();
     };
 }
